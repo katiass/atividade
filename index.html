@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor de Atividades com Tarefas - Coaching</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-content">
+            <h1>📋 Monitor de Atividades <span>| Coaching</span></h1>
+            <div class="header-stats">
+                <div class="stat-card em-andamento">
+                    <span class="stat-value" id="statEmAndamento">0</span>
+                    <span class="stat-label">Em andamento</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="statTotalTarefas">0</span>
+                    <span class="stat-label">Tarefas</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="statGain">0%</span>
+                    <span class="stat-label">Ganho ⚡</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="statDrain">0%</span>
+                    <span class="stat-label">Dreno 🔋</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="panel">
+            <h2>▶️ Nova Atividade</h2>
+            <form id="formNovaAtividade">
+                <div class="form-group">
+                    <label for="nomeAtividade">Nome da Atividade <span class="required">*</span></label>
+                    <input type="text" id="nomeAtividade" placeholder="Ex: Relatório Mensal, Estudar..." required>
+                </div>
+                <div class="form-group">
+                    <label for="dataInicioAtividade">📅 Data de Início <span class="required">*</span></label>
+                    <input type="datetime-local" id="dataInicioAtividade" required>
+                </div>
+                <div class="form-group">
+                    <label>Modo Operacional <span class="required">*</span></label>
+                    <div class="mode-pills" id="modePillsAtividade">
+                        <span class="mode-pill" data-mode="profundo">🧠 Profundo</span>
+                        <span class="mode-pill" data-mode="colaborativo">🤝 Colaborativo</span>
+                        <span class="mode-pill active" data-mode="superficial">📋 Superficial</span>
+                    </div>
+                    <input type="hidden" id="modoAtividade" value="superficial">
+                </div>
+                <div class="form-group">
+                    <label for="dominioAtividade">Domínio da Vida <span class="required">*</span></label>
+                    <select id="dominioAtividade" required>
+                        <option value="">Selecione...</option>
+                        <option>Carreira & Negócios</option>
+                        <option>Relacionamento & Família</option>
+                        <option>Corpo & Saúde</option>
+                        <option>Mente & Espírito</option>
+                        <option>Finanças Patrimoniais</option>
+                        <option>Lar & Logística</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="frequenciaAtividade">Frequência</label>
+                    <select id="frequenciaAtividade">
+                        <option>Único</option>
+                        <option>Diário</option>
+                        <option selected>Semanal</option>
+                        <option>Quinzenal</option>
+                        <option>Mensal</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">▶️ Criar Atividade</button>
+            </form>
+            <div class="divider"><span>atalho</span></div>
+            <button class="btn btn-accent" id="btnAtividadeRapida">⚡ Atividade Rápida (já concluída)</button>
+            <div class="form-row" style="margin-top:0.5rem;">
+                <button class="btn btn-success" id="btnExportar" style="flex:1;">💾 Exportar</button>
+                <button class="btn btn-accent" id="btnImportar" style="flex:1;">📥 Importar</button>
+            </div>
+            <button class="btn btn-danger-outline" id="btnLimparTudo">🗑️ Limpar Tudo</button>
+        </aside>
+
+        <section class="panel">
+            <div class="tabs">
+                <span class="tab active" data-tab="lista">📋 Lista de Atividades</span>
+                <span class="tab" data-tab="timeline">📊 Linha do Tempo</span>
+            </div>
+            <div class="tab-content active" id="tabLista">
+                <div class="activities-header">
+                    <h2>📊 Atividades</h2>
+                    <div class="filter-pills" id="filterPills">
+                        <span class="filter-pill active" data-filter="todas">Todas</span>
+                        <span class="filter-pill" data-filter="em-andamento">🟡 Em andamento</span>
+                        <span class="filter-pill" data-filter="concluidas">✅ Concluídas</span>
+                        <span class="filter-pill" data-filter="Carreira & Negócios">💼 Carreira</span>
+                        <span class="filter-pill" data-filter="ganho">⚡ Ganho</span>
+                        <span class="filter-pill" data-filter="dreno">🔋 Dreno</span>
+                    </div>
+                </div>
+                <div class="activities-grid" id="activitiesGrid">
+                    <div class="empty-state"><div class="empty-icon">📭</div><p>Nenhuma atividade</p></div>
+                </div>
+            </div>
+            <div class="tab-content" id="tabTimeline">
+                <div class="timeline-semana-nav">
+                    <button class="btn-nav" id="btnSemanaAnterior">◀ Semana Anterior</button>
+                    <span class="semana-label" id="semanaLabel">--</span>
+                    <button class="btn-nav" id="btnProximaSemana">Próxima Semana ▶</button>
+                    <button class="btn-nav" id="btnSemanaAtual" style="margin-left:auto;">📅 Hoje</button>
+                </div>
+                <div class="timeline-legend">
+                    <span class="legend-item"><span class="legend-color profundo"></span> Profundo</span>
+                    <span class="legend-item"><span class="legend-color colaborativo"></span> Colaborativo</span>
+                    <span class="legend-item"><span class="legend-color superficial"></span> Superficial</span>
+                    <span>|</span>
+                    <span class="legend-item">⬤ Ganho (borda verde)</span>
+                    <span class="legend-item">⬤ Dreno (borda vermelha)</span>
+                    <span class="legend-item">⬤ Neutro (borda laranja)</span>
+                    <span>|</span>
+                    <span class="legend-item">▬▬ Tracejado = Em andamento</span>
+                </div>
+                <div class="timeline-container" id="timelineContainer">
+                    <div class="empty-state"><div class="empty-icon">📊</div><p>Nenhuma tarefa nesta semana</p></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- MODAIS -->
+    <div class="modal-overlay" id="modalTarefa" style="display:none;">
+        <div class="modal">
+            <h3>➕ Adicionar Tarefa</h3>
+            <p style="font-size:0.82rem;color:var(--text-light);margin-bottom:0.8rem;">Atividade: <strong id="modalTarefaAtividadeNome">--</strong></p>
+            <div class="form-group"><label for="tarefaDescricao">Descrição da Tarefa <span class="required">*</span></label><input type="text" id="tarefaDescricao" required></div>
+            <div class="form-row">
+                <div class="form-group"><label for="tarefaInicio">📅 Início <span class="required">*</span></label><input type="datetime-local" id="tarefaInicio" required></div>
+                <div class="form-group"><label for="tarefaFim">📅 Término <span class="required">*</span></label><input type="datetime-local" id="tarefaFim" required></div>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-cancel" onclick="fecharModalTarefa()">Cancelar</button>
+                <button class="btn btn-confirm" id="btnSalvarTarefa">💾 Salvar Tarefa</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalFinalizar" style="display:none;">
+        <div class="modal">
+            <h3>🏁 Finalizar Atividade</h3>
+            <p style="font-size:0.82rem;color:var(--text-light);margin-bottom:0.8rem;"><strong id="modalFinalizarNome">--</strong><br>Tarefas: <span id="modalFinalizarTarefas">0</span> | Duração total: <strong id="modalFinalizarDuracao">--</strong></p>
+            <div class="form-group"><label>Micro-Fonte de Energia <span class="required">*</span></label>
+                <div class="energy-selector">
+                    <div class="energy-option gain"><input type="radio" name="finalizarEnergia" value="ganho" id="finGanho" required><label for="finGanho">⚡ Ganho</label></div>
+                    <div class="energy-option neutral"><input type="radio" name="finalizarEnergia" value="neutro" id="finNeutro"><label for="finNeutro">➖ Neutro</label></div>
+                    <div class="energy-option drain"><input type="radio" name="finalizarEnergia" value="dreno" id="finDreno"><label for="finDreno">🔋 Dreno</label></div>
+                </div>
+            </div>
+            <div class="form-group"><label for="finalizarAprendizado">📝 Micro-Aprendizado</label><textarea id="finalizarAprendizado" rows="2"></textarea></div>
+            <div class="btn-row">
+                <button class="btn btn-cancel" onclick="fecharModalFinalizar()">Cancelar</button>
+                <button class="btn btn-confirm" id="btnConfirmarFinalizacao">✅ Finalizar Atividade</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalRapida" style="display:none;">
+        <div class="modal">
+            <h3>⚡ Atividade Rápida</h3>
+            <div class="form-group"><label for="rapidaNome">Nome <span class="required">*</span></label><input type="text" id="rapidaNome" required></div>
+            <div class="form-row">
+                <div class="form-group"><label for="rapidaInicio">📅 Início <span class="required">*</span></label><input type="datetime-local" id="rapidaInicio" required></div>
+                <div class="form-group"><label for="rapidaFim">📅 Término <span class="required">*</span></label><input type="datetime-local" id="rapidaFim" required></div>
+            </div>
+            <div class="form-group"><label>Energia <span class="required">*</span></label>
+                <div class="energy-selector">
+                    <div class="energy-option gain"><input type="radio" name="rapidaEnergia" value="ganho" required><label>⚡ Ganho</label></div>
+                    <div class="energy-option neutral"><input type="radio" name="rapidaEnergia" value="neutro"><label>➖ Neutro</label></div>
+                    <div class="energy-option drain"><input type="radio" name="rapidaEnergia" value="dreno"><label>🔋 Dreno</label></div>
+                </div>
+            </div>
+            <div class="form-group"><label>Modo</label>
+                <div class="mode-pills" id="rapidaModePills">
+                    <span class="mode-pill" data-mode="profundo">🧠 Profundo</span>
+                    <span class="mode-pill" data-mode="colaborativo">🤝 Colaborativo</span>
+                    <span class="mode-pill active" data-mode="superficial">📋 Superficial</span>
+                </div>
+                <input type="hidden" id="rapidaModo" value="superficial">
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label for="rapidaDominio">Domínio</label><select id="rapidaDominio"><option>Carreira & Negócios</option><option>Relacionamento & Família</option><option>Corpo & Saúde</option><option>Mente & Espírito</option><option>Finanças Patrimoniais</option><option>Lar & Logística</option></select></div>
+                <div class="form-group"><label for="rapidaFrequencia">Frequência</label><select id="rapidaFrequencia"><option>Único</option><option>Diário</option><option selected>Semanal</option><option>Mensal</option></select></div>
+            </div>
+            <div class="btn-row"><button class="btn btn-cancel" onclick="fecharModalRapida()">Cancelar</button><button class="btn btn-confirm" id="btnSalvarRapida">✅ Registrar</button></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast" style="display:none;"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
